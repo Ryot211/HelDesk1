@@ -1,20 +1,13 @@
-package com.ryot.helpdesk.entity;
+package com.ryot.helpdesk.dto;
 
-import com.ryot.helpdesk.utils.EsquemaConfig;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @Setter
-@Table(name= "categoria_ticket" , schema = EsquemaConfig.helpdesk)
-
-public class CategoriaTicket {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CategoriaTicketDto {
     private Long id;
     private String nombre;
     private String descripcion;
