@@ -1,7 +1,7 @@
 package com.ryot.helpdesk.service;
 
 
-import com.ryot.helpdesk.dto.DepartamentoDto;
+import com.ryot.helpdesk.dto.Departamento.DepartamentoDto;
 import com.ryot.helpdesk.entity.Departamento;
 import com.ryot.helpdesk.mapper.DepartamentoMapper;
 import com.ryot.helpdesk.repository.DepartamentoRepo;

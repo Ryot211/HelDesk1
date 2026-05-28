@@ -1,6 +1,6 @@
 package com.ryot.helpdesk.service;
 
-import com.ryot.helpdesk.dto.RolDto;
+import com.ryot.helpdesk.dto.Rol.RolDto;
 import com.ryot.helpdesk.entity.Rol;
 import com.ryot.helpdesk.mapper.RolMapper;
 import com.ryot.helpdesk.repository.RolRepo;

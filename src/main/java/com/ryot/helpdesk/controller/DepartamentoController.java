@@ -1,6 +1,6 @@
 package com.ryot.helpdesk.controller;
 
-import com.ryot.helpdesk.dto.DepartamentoDto;
+import com.ryot.helpdesk.dto.Departamento.DepartamentoDto;
 import com.ryot.helpdesk.service.DepartamentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.ryot.helpdesk.mapper;
 
 
-import com.ryot.helpdesk.dto.UsuarioDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioDto;
 import com.ryot.helpdesk.entity.Usuario;
 import org.mapstruct.Mapper;
 

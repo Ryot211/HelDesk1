@@ -1,4 +1,4 @@
-package com.ryot.helpdesk.dto;
+package com.ryot.helpdesk.dto.Categoria;
 
 import lombok.Getter;
 import lombok.Setter;

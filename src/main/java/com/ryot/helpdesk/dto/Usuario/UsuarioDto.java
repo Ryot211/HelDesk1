@@ -1,5 +1,7 @@
-package com.ryot.helpdesk.dto;
+package com.ryot.helpdesk.dto.Usuario;
 
+import com.ryot.helpdesk.dto.Departamento.DepartamentoDto;
+import com.ryot.helpdesk.dto.Rol.RolDto;
 import lombok.Getter;
 import lombok.Setter;
 

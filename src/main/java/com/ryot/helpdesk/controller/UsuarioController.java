@@ -1,9 +1,9 @@
 package com.ryot.helpdesk.controller;
 
 
-import com.ryot.helpdesk.dto.UsuarioCrearDto;
-import com.ryot.helpdesk.dto.UsuarioDto;
-import com.ryot.helpdesk.dto.UsuarioPasswordDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioCrearDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioPasswordDto;
 import com.ryot.helpdesk.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

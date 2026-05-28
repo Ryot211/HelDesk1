@@ -1,6 +1,6 @@
 package com.ryot.helpdesk.mapper;
 
-import com.ryot.helpdesk.dto.DepartamentoDto;
+import com.ryot.helpdesk.dto.Departamento.DepartamentoDto;
 import com.ryot.helpdesk.entity.Departamento;
 import org.mapstruct.Mapper;
 

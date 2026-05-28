@@ -1,7 +1,7 @@
 package com.ryot.helpdesk.controller;
 
 
-import com.ryot.helpdesk.dto.RolDto;
+import com.ryot.helpdesk.dto.Rol.RolDto;
 import com.ryot.helpdesk.service.RolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

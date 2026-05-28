@@ -1,7 +1,6 @@
 package com.ryot.helpdesk.controller;
 
-import com.ryot.helpdesk.dto.CategoriaTicketDto;
-import com.ryot.helpdesk.entity.CategoriaTicket;
+import com.ryot.helpdesk.dto.Categoria.CategoriaTicketDto;
 import com.ryot.helpdesk.service.CategoriaTicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

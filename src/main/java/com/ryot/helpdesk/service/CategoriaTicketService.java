@@ -1,6 +1,6 @@
 package com.ryot.helpdesk.service;
 
-import com.ryot.helpdesk.dto.CategoriaTicketDto;
+import com.ryot.helpdesk.dto.Categoria.CategoriaTicketDto;
 import com.ryot.helpdesk.entity.CategoriaTicket;
 import com.ryot.helpdesk.mapper.CategoriaTicketMapper;
 import com.ryot.helpdesk.repository.CategoriaTicketRepo;

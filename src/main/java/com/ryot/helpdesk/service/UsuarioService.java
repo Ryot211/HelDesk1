@@ -1,9 +1,9 @@
 package com.ryot.helpdesk.service;
 
 
-import com.ryot.helpdesk.dto.UsuarioCrearDto;
-import com.ryot.helpdesk.dto.UsuarioDto;
-import com.ryot.helpdesk.dto.UsuarioPasswordDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioCrearDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioPasswordDto;
 import com.ryot.helpdesk.entity.Departamento;
 import com.ryot.helpdesk.entity.Rol;
 import com.ryot.helpdesk.entity.Usuario;

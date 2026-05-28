@@ -1,6 +1,6 @@
 package com.ryot.helpdesk.mapper;
 
-import com.ryot.helpdesk.dto.RolDto;
+import com.ryot.helpdesk.dto.Rol.RolDto;
 import com.ryot.helpdesk.entity.Rol;
 import org.mapstruct.Mapper;
 
