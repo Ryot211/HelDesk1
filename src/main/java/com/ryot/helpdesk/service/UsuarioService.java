@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,16 +35,17 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public List<UsuarioDto> listarActivos() {
         List<Usuario> usuarios = usuarioRepo.findByEstadoRegistroOrderByIdAsc(SisVars.Activo);
         return usuarioMapper.toDto(usuarios);
     }
-
+    @Transactional(readOnly = true)
     public List<UsuarioDto> listarTodos(){
         List<Usuario> usuarios = usuarioRepo.findAll();
         return usuarioMapper.toDto(usuarios);
     }
-
+    @Transactional(readOnly = true)
     public UsuarioDto buscarPorId(Long id){
         Usuario usuario = usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"+id));
         return usuarioMapper.toDto(usuario);
