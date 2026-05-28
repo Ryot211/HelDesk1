@@ -2,6 +2,8 @@ package com.ryot.helpdesk.controller;
 
 
 import com.ryot.helpdesk.dto.Ticket.*;
+import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
+import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,17 @@ public class TicketController {
     @PostMapping("/cerrar")
     public TicketDto cerrar(@RequestBody TicketSolucionDto dto){
         return ticketService.cerrarConSolucion(dto);
+    }
+
+//    Ticket Comentario
+    @PostMapping("/comentarios/listar")
+    public List<TicketComentarioDto> listarComentarios(@RequestBody TicketComentarioCrearDto dto) {
+        return ticketService.listarComentarios(dto.getTicketId());
+    }
+
+    @PostMapping("/comentarios/agregar")
+    public TicketComentarioDto agregarComentario(@RequestBody TicketComentarioCrearDto dto) {
+        return ticketService.agregarComentario(dto);
     }
 
 }

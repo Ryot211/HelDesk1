@@ -1,19 +1,17 @@
 package com.ryot.helpdesk.service;
 
 import com.ryot.helpdesk.dto.Ticket.*;
-import com.ryot.helpdesk.entity.CategoriaTicket;
-import com.ryot.helpdesk.entity.Departamento;
-import com.ryot.helpdesk.entity.Ticket;
-import com.ryot.helpdesk.entity.Usuario;
+import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
+import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
+import com.ryot.helpdesk.entity.*;
+import com.ryot.helpdesk.mapper.TicketComentarioMapper;
 import com.ryot.helpdesk.mapper.TicketMapper;
-import com.ryot.helpdesk.repository.CategoriaTicketRepo;
-import com.ryot.helpdesk.repository.DepartamentoRepo;
-import com.ryot.helpdesk.repository.TicketRepo;
-import com.ryot.helpdesk.repository.UsuarioRepo;
+import com.ryot.helpdesk.repository.*;
 import com.ryot.helpdesk.utils.SisVars;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +31,10 @@ public class TicketService {
     private UsuarioRepo usuarioRepo;
     @Autowired
     private TicketMapper ticketMapper;
+    @Autowired
+    private TicketComentarioRepo ticketComentarioRepo;
+    @Autowired
+    private TicketComentarioMapper ticketComentarioMapper;
 
     public List<TicketDto> listarTodos(){
         List<Ticket> tickets = ticketRepo.findAllByOrderByIdDesc();
@@ -221,5 +223,73 @@ public class TicketService {
         return codigo;
     }
 
+//Ticket comentario
 
+    @Transactional(readOnly = true)
+    public List<TicketComentarioDto> listarComentarios(Long ticketId) {
+        if (ticketId == null) {
+            throw new RuntimeException("El id del ticket es obligatorio");
+        }
+
+        List<TicketComentario> comentarios =
+                ticketComentarioRepo.findByTicketIdOrderByFechaCreacionAsc(ticketId);
+
+        return ticketComentarioMapper.toDto(comentarios);
+    }
+
+    public TicketComentarioDto agregarComentario(TicketComentarioCrearDto dto) {
+
+
+        validarCrearComentario(dto);
+
+        Ticket ticket = ticketRepo.findById(dto.getTicketId())
+                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+
+        Usuario usuario = usuarioRepo.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getUsuarioId()));
+
+        TicketComentario comentario = new TicketComentario();
+        comentario.setTicket(ticket);
+        comentario.setUsuario(usuario);
+        comentario.setComentario(dto.getComentario());
+        comentario.setTipo(
+                dto.getTipo() == null || dto.getTipo().isBlank()
+                        ? "PUBLICO"
+                        : dto.getTipo()
+        );
+
+        TicketComentario guardado = ticketComentarioRepo.save(comentario);
+        return ticketComentarioMapper.toDto(guardado);
+    }
+
+
+    private void validarCrearComentario(TicketComentarioCrearDto dto) {
+        if (dto.getTicketId() == null) {
+            throw new RuntimeException("El ticket es obligatorio");
+        }
+
+        if (dto.getUsuarioId() == null) {
+            throw new RuntimeException("El usuario es obligatorio");
+        }
+
+        if (dto.getComentario() == null || dto.getComentario().isBlank()) {
+            throw new RuntimeException("El comentario es obligatorio");
+        }
+
+        if (dto.getTipo() != null && !dto.getTipo().isBlank()) {
+            validarTipoComentario(dto.getTipo());
+        }
+    }
+
+    private void validarTipoComentario(String tipo) {
+        List<String> tiposPermitidos = List.of(
+                SisVars.PUBLICO,
+                SisVars.INTERNO,
+                SisVars.SISTEMA
+        );
+
+        if (!tiposPermitidos.contains(tipo)) {
+            throw new RuntimeException("Tipo de comentario no permitido: " + tipo);
+        }
+    }
 }

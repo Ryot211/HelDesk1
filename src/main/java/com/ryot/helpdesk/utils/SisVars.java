@@ -18,4 +18,10 @@ public class SisVars {
     public static final String ANULADO = "ANULADO";
 
     public static final String REABIERTO = "REABIERTO";
+
+//    Ticket comentario    "PUBLICO","INTERNO","SISTEMA"
+
+public static final String PUBLICO = "PUBLICO";
+public static final String INTERNO = "INTERNO";
+public static final String SISTEMA = "SISTEMA";
 }
