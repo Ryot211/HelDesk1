@@ -2,6 +2,8 @@ package com.ryot.helpdesk.controller;
 
 
 import com.ryot.helpdesk.dto.Ticket.*;
+import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAdjuntoCrearDto;
+import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAjuntoDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.service.TicketService;
@@ -63,5 +65,22 @@ public class TicketController {
     public TicketComentarioDto agregarComentario(@RequestBody TicketComentarioCrearDto dto) {
         return ticketService.agregarComentario(dto);
     }
+
+//    Ticket Adjunto
+
+    @PostMapping("/adjuntos/listar")
+    public List<TicketAjuntoDto> listarAdjuntos(@PathVariable Long id) {
+        return ticketService.listarAdjuntos(id);
+    }
+    @PostMapping("/adjuntos/registrar")
+    public TicketAjuntoDto registrarAdjunto(@RequestBody TicketAdjuntoCrearDto dto) {
+        return ticketService.registrarAdjunto(dto);
+    }
+
+    @PostMapping("/adjuntos/inactivar")
+    public void inactivarAdjunto(@PathVariable Long id) {
+        ticketService.inactivarAdjunto(id);
+    }
+
 
 }

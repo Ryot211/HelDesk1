@@ -1,9 +1,12 @@
 package com.ryot.helpdesk.service;
 
 import com.ryot.helpdesk.dto.Ticket.*;
+import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAdjuntoCrearDto;
+import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAjuntoDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.entity.*;
+import com.ryot.helpdesk.mapper.TicketAdjuntoMapper;
 import com.ryot.helpdesk.mapper.TicketComentarioMapper;
 import com.ryot.helpdesk.mapper.TicketMapper;
 import com.ryot.helpdesk.repository.*;
@@ -35,6 +38,10 @@ public class TicketService {
     private TicketComentarioRepo ticketComentarioRepo;
     @Autowired
     private TicketComentarioMapper ticketComentarioMapper;
+    @Autowired
+    private TicketAdjuntoRepo ticketAdjuntoRepo;
+    @Autowired
+    private TicketAdjuntoMapper ticketAdjuntoMapper;
 
     public List<TicketDto> listarTodos(){
         List<Ticket> tickets = ticketRepo.findAllByOrderByIdDesc();
@@ -292,4 +299,81 @@ public class TicketService {
             throw new RuntimeException("Tipo de comentario no permitido: " + tipo);
         }
     }
+
+//    Ticket Adjunto
+
+    @Transactional(readOnly = true)
+    public List<TicketAjuntoDto> listarAdjuntos(Long ticketId) {
+        if (ticketId == null) {
+            throw new RuntimeException("El id del ticket es obligatorio");
+        }
+
+        List<TicketAdjunto> adjuntos =
+                ticketAdjuntoRepo.findByTicketIdAndEstadoRegistroOrderByFechaCreacionDesc(
+                        ticketId,
+                        SisVars.Activo
+                );
+
+        return ticketAdjuntoMapper.toDto(adjuntos);
+    }
+
+    @Transactional
+    public TicketAjuntoDto registrarAdjunto(TicketAdjuntoCrearDto dto) {
+        validarRegistrarAdjunto(dto);
+
+        Ticket ticket = ticketRepo.findById(dto.getTicketId())
+                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+
+        Usuario subidoPor = usuarioRepo.findById(dto.getSubidoPorId())
+                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getSubidoPorId()));
+
+        TicketAdjunto adjunto = new TicketAdjunto();
+        adjunto.setTicket(ticket);
+        adjunto.setUsuario(subidoPor);
+        adjunto.setNombreOriginal(dto.getNombreOriginal());
+        adjunto.setNombreArchivo(dto.getNombreArchivo());
+        adjunto.setRutaArchivo(dto.getRutaArchivo());
+        adjunto.setTipoContenido(dto.getTipoContenido());
+        adjunto.setTamanioBytes(dto.getTamanioBytes());
+        adjunto.setEstadoRegistro(SisVars.Activo);
+
+        TicketAdjunto guardado = ticketAdjuntoRepo.save(adjunto);
+        return ticketAdjuntoMapper.toDto(guardado);
+    }
+
+    @Transactional
+    public void inactivarAdjunto(Long id) {
+        if (id == null) {
+            throw new RuntimeException("El id del adjunto es obligatorio");
+        }
+
+        TicketAdjunto adjunto = ticketAdjuntoRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("No existe el adjunto con id: " + id));
+
+        adjunto.setEstadoRegistro(SisVars.INACTIVO);
+        ticketAdjuntoRepo.save(adjunto);
+    }
+
+    private void validarRegistrarAdjunto(TicketAdjuntoCrearDto dto) {
+        if (dto.getTicketId() == null) {
+            throw new RuntimeException("El ticket es obligatorio");
+        }
+
+        if (dto.getSubidoPorId() == null) {
+            throw new RuntimeException("El usuario que sube el archivo es obligatorio");
+        }
+
+        if (dto.getNombreOriginal() == null || dto.getNombreOriginal().isBlank()) {
+            throw new RuntimeException("El nombre original del archivo es obligatorio");
+        }
+
+        if (dto.getNombreArchivo() == null || dto.getNombreArchivo().isBlank()) {
+            throw new RuntimeException("El nombre interno del archivo es obligatorio");
+        }
+
+        if (dto.getRutaArchivo() == null || dto.getRutaArchivo().isBlank()) {
+            throw new RuntimeException("La ruta del archivo es obligatoria");
+        }
+    }
+
 }
