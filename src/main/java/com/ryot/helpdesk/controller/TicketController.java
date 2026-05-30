@@ -81,6 +81,11 @@ public class TicketController {
     public void inactivarAdjunto(@PathVariable Long id) {
         ticketService.inactivarAdjunto(id);
     }
+//Ticket Historial
 
+    @PostMapping("historial/listar")
+    public List<TicketHistorialDto> listarHistorial (@RequestBody TicketDto dto){
+        return ticketService.listarHistorial(dto.getId());
+    }
 
 }

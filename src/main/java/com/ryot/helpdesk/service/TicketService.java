@@ -8,6 +8,7 @@ import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.entity.*;
 import com.ryot.helpdesk.mapper.TicketAdjuntoMapper;
 import com.ryot.helpdesk.mapper.TicketComentarioMapper;
+import com.ryot.helpdesk.mapper.TicketHistorialMapper;
 import com.ryot.helpdesk.mapper.TicketMapper;
 import com.ryot.helpdesk.repository.*;
 import com.ryot.helpdesk.utils.SisVars;
@@ -42,6 +43,10 @@ public class TicketService {
     private TicketAdjuntoRepo ticketAdjuntoRepo;
     @Autowired
     private TicketAdjuntoMapper ticketAdjuntoMapper;
+    @Autowired
+    private TicketHistorialRepo ticketHistorialRepo;
+    @Autowired
+    private TicketHistorialMapper  ticketHistorialMapper;
 
     public List<TicketDto> listarTodos(){
         List<Ticket> tickets = ticketRepo.findAllByOrderByIdDesc();
@@ -375,5 +380,43 @@ public class TicketService {
             throw new RuntimeException("La ruta del archivo es obligatoria");
         }
     }
+//Ticket Historial
 
+    @Transactional(readOnly = true)
+    public List<TicketHistorialDto> listarHistorial(Long ticketId) {
+        if(ticketId == null) {
+            throw new RuntimeException("El id del ticket es obligatorio");
+        }
+
+        List<TicketHistorial> historial =
+                    ticketHistorialRepo.findByTicketIdOrderByFechaCreacionDesc(ticketId);
+        return ticketHistorialMapper.toDto(historial);
+    }
+
+    private void registrarHistorial(
+            Ticket ticket,
+            Usuario usuario,
+            String accion,
+            String estadoAnterior,
+            String estadoNuevo,
+            String prioridadAnterior,
+            String prioridadNueva,
+            Usuario usuarioAsignado,
+            String observacion
+    ){
+        TicketHistorial historial = new TicketHistorial();
+        historial.setTicket(ticket);
+        historial.setUsuario(usuario);
+        historial.setAccion(accion);
+
+        historial.setEstadoAnterior(estadoAnterior);
+        historial.setEstadoNuevo(estadoNuevo);
+        historial.setPrioridadAnterior(prioridadAnterior);
+        historial.setPrioridadNueva(prioridadNueva);
+
+        historial.setUsuarioAsignado(usuarioAsignado);
+
+        historial.setObservacion(observacion);
+        ticketHistorialRepo.save(historial);
+    }
 }
