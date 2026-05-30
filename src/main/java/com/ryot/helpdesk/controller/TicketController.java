@@ -30,7 +30,7 @@ public class TicketController {
         return ticketService.listarPorEstado(estado);
     }
 
-    @PostMapping("/buscar")
+    @PostMapping("/buscar/{id}")
     public TicketDto buscar(@PathVariable Long id){
         return ticketService.buscarPorId(id);
     }

@@ -48,7 +48,7 @@ public class CategoriaTicketService {
     }
     private CategoriaTicketDto CreaNuevo(CategoriaTicketDto dto) {
         if(categoriaTicketRepo.existsByNombreIgnoreCase(dto.getNombre())){
-            throw new RuntimeException("Nombre existente"+dto.getNombre());
+            throw new RuntimeException("Ya existe una categoria con ese nombre :"+dto.getNombre());
         }
         CategoriaTicket entity = categoriaTicketMapper.toEntity(dto);
         entity.setId(null);

@@ -48,11 +48,12 @@ public class TicketService {
     @Autowired
     private TicketHistorialMapper  ticketHistorialMapper;
 
+    @Transactional (readOnly = true)
     public List<TicketDto> listarTodos(){
         List<Ticket> tickets = ticketRepo.findAllByOrderByIdDesc();
         return ticketMapper.toDtos(tickets);
     }
-
+    @Transactional (readOnly = true)
     public List<TicketDto> listarPorEstado(String estado) {
         if (estado == null || estado.isBlank()) {
             throw new RuntimeException("El estado es obligatorio");
@@ -61,6 +62,8 @@ public class TicketService {
         List<Ticket> tickets = ticketRepo.findByEstadoOrderByIdDesc(estado);
         return ticketMapper.toDtos(tickets);
     }
+
+    @Transactional (readOnly = true)
     public TicketDto buscarPorId(Long id) {
         Ticket ticket = ticketRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + id));
@@ -94,6 +97,8 @@ public class TicketService {
         Ticket guardado = ticketRepo.save(ticket);
         return ticketMapper.toDto(guardado);
     }
+
+    @Transactional
     public TicketDto asignar(TicketAsignarDto dto) {
         if (dto.getTicketId() == null) {
             throw new RuntimeException("El id del ticket es obligatorio");
@@ -110,13 +115,13 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("No existe el usuario asignado con id: " + dto.getAsignadoId()));
 
         ticket.setAsignadoA(asignadoA);
-        ticket.setEstado("ASIGNADO");
+        ticket.setEstado(SisVars.ASIGNADO);
         ticket.setFechaAsignacion(LocalDateTime.now());
 
         Ticket actualizado = ticketRepo.save(ticket);
         return ticketMapper.toDto(actualizado);
     }
-
+    @Transactional
     public TicketDto cambiarEstado(TicketEstadoDto dto) {
         if (dto.getTicketId() == null) {
             throw new RuntimeException("El id del ticket es obligatorio");

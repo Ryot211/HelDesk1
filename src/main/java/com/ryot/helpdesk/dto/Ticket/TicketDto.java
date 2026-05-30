@@ -1,6 +1,9 @@
 package com.ryot.helpdesk.dto.Ticket;
 
 
+import com.ryot.helpdesk.dto.Categoria.CategoriaTicketDto;
+import com.ryot.helpdesk.dto.Departamento.DepartamentoDto;
+import com.ryot.helpdesk.dto.Usuario.UsuarioDto;
 import com.ryot.helpdesk.entity.CategoriaTicket;
 import com.ryot.helpdesk.entity.Departamento;
 import com.ryot.helpdesk.entity.Usuario;
@@ -17,16 +20,16 @@ public class TicketDto {
     private String descripcion;
     private String estado;
     private String prioridad;
-    private CategoriaTicket categoria;
-    private Departamento departamento;
-    private Usuario usuarioCreacion;
-    private Usuario usuarioAsignado;
+    private CategoriaTicketDto categoria;
+    private DepartamentoDto departamento;
+    private UsuarioDto usuarioCreacion;
+    private UsuarioDto usuarioAsignado;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private LocalDateTime fechaAsignacion;
     private LocalDateTime fechaInicioAtencion;
     private LocalDateTime fechaResolucion;
     private LocalDateTime fechaCierre;
-    private Usuario usuarioFinalizado;
+    private UsuarioDto usuarioFinalizado;
     private String solucion;
 }
