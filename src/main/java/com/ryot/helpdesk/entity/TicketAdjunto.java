@@ -22,7 +22,7 @@ public class TicketAdjunto {
     @JoinColumn(name = "usuario_creacion", referencedColumnName = "id")
     private Usuario usuario;
     private String nombreOriginal;
-    private String nombreArchivo;
+    private String nombreAchivo;
     private String rutaArchivo;
     private String tipoContenido;
     private  Long tamanioBytes;

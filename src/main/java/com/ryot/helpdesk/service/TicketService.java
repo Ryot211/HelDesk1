@@ -336,7 +336,7 @@ public class TicketService {
         adjunto.setTicket(ticket);
         adjunto.setUsuario(subidoPor);
         adjunto.setNombreOriginal(dto.getNombreOriginal());
-        adjunto.setNombreArchivo(dto.getNombreArchivo());
+        adjunto.setNombreAchivo(dto.getNombreArchivo());
         adjunto.setRutaArchivo(dto.getRutaArchivo());
         adjunto.setTipoContenido(dto.getTipoContenido());
         adjunto.setTamanioBytes(dto.getTamanioBytes());
@@ -409,7 +409,7 @@ public class TicketService {
         historial.setUsuario(usuario);
         historial.setAccion(accion);
 
-        historial.setEstadoAnterior(estadoAnterior);
+        historial.setEstadoAnteior(estadoAnterior);
         historial.setEstadoNuevo(estadoNuevo);
         historial.setPrioridadAnterior(prioridadAnterior);
         historial.setPrioridadNueva(prioridadNueva);

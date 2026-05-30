@@ -22,7 +22,7 @@ public class TicketHistorial {
     @JoinColumn  (name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
     private String accion;
-    private String estadoAnterior;
+    private String estadoAnteior;
     private String estadoNuevo;
     private String prioridadAnterior;
     private String prioridadNueva;
