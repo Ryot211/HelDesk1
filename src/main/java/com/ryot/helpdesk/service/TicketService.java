@@ -70,7 +70,7 @@ public class TicketService {
 
         return ticketMapper.toDto(ticket);
     }
-
+    @Transactional
     public TicketDto crear(TicketCrearDto dto) {
         validarCrear(dto);
 
@@ -95,6 +95,18 @@ public class TicketService {
         ticket.setFechaCreacion(LocalDateTime.now());
 
         Ticket guardado = ticketRepo.save(ticket);
+        registrarHistorial(
+                guardado,
+                creadoPor,
+                SisVars.REGISTRADO,
+                null,
+                guardado.getEstado(),
+                null,
+                guardado.getPrioridad(),
+                null,
+                SisVars.HIST_CREACION
+        );
+
         return ticketMapper.toDto(guardado);
     }
 
@@ -113,12 +125,24 @@ public class TicketService {
 
         Usuario asignadoA = usuarioRepo.findById(dto.getAsignadoId())
                 .orElseThrow(() -> new RuntimeException("No existe el usuario asignado con id: " + dto.getAsignadoId()));
-
+        String estadoAnterior = ticket.getEstado();
         ticket.setAsignadoA(asignadoA);
         ticket.setEstado(SisVars.ASIGNADO);
         ticket.setFechaAsignacion(LocalDateTime.now());
 
         Ticket actualizado = ticketRepo.save(ticket);
+
+        registrarHistorial(
+                actualizado,
+                asignadoA,
+                SisVars.ASIGNADO,
+                estadoAnterior,
+                actualizado.getEstado(),
+                null,
+                null,
+                asignadoA,
+                SisVars.HIST_ASIGNACION
+        );
         return ticketMapper.toDto(actualizado);
     }
     @Transactional
@@ -135,7 +159,7 @@ public class TicketService {
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
                 .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
-
+        String estadoAnterior = ticket.getEstado();
         ticket.setEstado(dto.getEstado());
 
         if (SisVars.EN_PROCESO.equals(dto.getEstado()) && ticket.getFechaInicioAtencion() == null) {
@@ -151,10 +175,25 @@ public class TicketService {
         }
 
         Ticket actualizado = ticketRepo.save(ticket);
+        Usuario usuarioAccion = actualizado.getAsignadoA() != null
+                ? actualizado.getAsignadoA()
+                : actualizado.getCreadoPor();
+        registrarHistorial(
+                actualizado,
+                usuarioAccion,
+                SisVars.HIST_CAMBIO_ESTADO,
+                estadoAnterior,
+                actualizado.getEstado(),
+                null,
+                null,
+                actualizado.getAsignadoA(),
+                SisVars.OBS_CAMBIO_ESTADO
+        );
+
         return ticketMapper.toDto(actualizado);
     }
 
-
+    @Transactional
     public TicketDto cerrarConSolucion(TicketSolucionDto dto) {
         if (dto.getTicketId() == null) {
             throw new RuntimeException("El id del ticket es obligatorio");
@@ -173,9 +212,11 @@ public class TicketService {
 
         Usuario cerradoPor = usuarioRepo.findById(dto.getCerradoPorId())
                 .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getCerradoPorId()));
+        String estadoAnterior = ticket.getEstado();
 
         ticket.setSolucion(dto.getSolucion());
         ticket.setCerradoPor(cerradoPor);
+
         ticket.setEstado(SisVars.CERRADO);
 
         if (ticket.getFechaResolucion() == null) {
@@ -185,6 +226,19 @@ public class TicketService {
         ticket.setFechaCierre(LocalDateTime.now());
 
         Ticket actualizado = ticketRepo.save(ticket);
+        registrarHistorial(
+                actualizado,
+                cerradoPor,
+                SisVars.HIST_CIERRE,
+                estadoAnterior,
+                actualizado.getEstado(),
+                null,
+                null,
+                actualizado.getAsignadoA(),
+                SisVars.OBS_TICKET_CERRADO_SOLUCION
+        );
+
+
         return ticketMapper.toDto(actualizado);
     }
 
@@ -253,10 +307,8 @@ public class TicketService {
 
         return ticketComentarioMapper.toDto(comentarios);
     }
-
+    @Transactional
     public TicketComentarioDto agregarComentario(TicketComentarioCrearDto dto) {
-
-
         validarCrearComentario(dto);
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
@@ -269,13 +321,25 @@ public class TicketService {
         comentario.setTicket(ticket);
         comentario.setUsuario(usuario);
         comentario.setComentario(dto.getComentario());
+        comentario.setFechaCreacion(LocalDateTime.now());
         comentario.setTipo(
                 dto.getTipo() == null || dto.getTipo().isBlank()
-                        ? "PUBLICO"
+                        ? SisVars.PUBLICO
                         : dto.getTipo()
         );
 
         TicketComentario guardado = ticketComentarioRepo.save(comentario);
+        registrarHistorial(
+                ticket,
+                usuario,
+                SisVars.HIST_COMENTARIO,
+                null,
+                null,
+                null,
+                null,
+                ticket.getAsignadoA(),
+                SisVars.OBS_COMENTARIO_AGREGADO
+        );
         return ticketComentarioMapper.toDto(guardado);
     }
 
@@ -346,8 +410,21 @@ public class TicketService {
         adjunto.setTipoContenido(dto.getTipoContenido());
         adjunto.setTamanioBytes(dto.getTamanioBytes());
         adjunto.setEstadoRegistro(SisVars.Activo);
+        adjunto.setFechaCreacion(LocalDateTime.now());
 
         TicketAdjunto guardado = ticketAdjuntoRepo.save(adjunto);
+        registrarHistorial(
+                ticket,
+                subidoPor,
+                SisVars.HIST_ADJUNTO,
+                null,
+                null,
+                null,
+                null,
+                ticket.getAsignadoA(),
+                SisVars.OBS_ADJUNTO_REGISTRADO
+
+        );
         return ticketAdjuntoMapper.toDto(guardado);
     }
 
@@ -361,6 +438,19 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("No existe el adjunto con id: " + id));
 
         adjunto.setEstadoRegistro(SisVars.INACTIVO);
+        adjunto.setFechaCreacion(LocalDateTime.now());
+        registrarHistorial(
+                adjunto.getTicket(),
+                adjunto.getUsuario(),
+                SisVars.HIST_ADJUNTO,
+                null,
+                null,
+                null,
+                null,
+                adjunto.getTicket().getAsignadoA(),
+                "Adjunto inactivado"
+        );
+
         ticketAdjuntoRepo.save(adjunto);
     }
 
@@ -420,6 +510,7 @@ public class TicketService {
         historial.setPrioridadNueva(prioridadNueva);
 
         historial.setUsuarioAsignado(usuarioAsignado);
+        historial.setFechaCreacion(LocalDateTime.now());
 
         historial.setObservacion(observacion);
         ticketHistorialRepo.save(historial);
