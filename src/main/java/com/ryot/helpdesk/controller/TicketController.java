@@ -25,7 +25,7 @@ public class TicketController {
         return ticketService.listarTodos();
     }
 
-    @PostMapping("/listar-por-estado")
+    @PostMapping("/listar-por-estado/{estado}")
     public List<TicketDto> listarPorEstado(@PathVariable String estado){
         return ticketService.listarPorEstado(estado);
     }
@@ -68,7 +68,7 @@ public class TicketController {
 
 //    Ticket Adjunto
 
-    @PostMapping("/adjuntos/listar")
+    @PostMapping("/adjuntos/listar/{id}")
     public List<TicketAjuntoDto> listarAdjuntos(@PathVariable Long id) {
         return ticketService.listarAdjuntos(id);
     }
@@ -77,7 +77,7 @@ public class TicketController {
         return ticketService.registrarAdjunto(dto);
     }
 
-    @PostMapping("/adjuntos/inactivar")
+    @PostMapping("/adjuntos/inactivar/{id}")
     public void inactivarAdjunto(@PathVariable Long id) {
         ticketService.inactivarAdjunto(id);
     }

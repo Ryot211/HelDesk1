@@ -88,7 +88,7 @@ public class TicketService {
         ticket.setTitulo(dto.getTitulo());
         ticket.setDescripcion(dto.getDescripcion());
         ticket.setPrioridad(dto.getPrioridad() == null || dto.getPrioridad().isBlank() ? "MEDIA" : dto.getPrioridad());
-        ticket.setEstado("REGISTRADO");
+        ticket.setEstado(SisVars.REGISTRADO);
         ticket.setCategoria(categoria);
         ticket.setDepartamentoSolicitante(departamento);
         ticket.setCreadoPor(creadoPor);
@@ -98,7 +98,7 @@ public class TicketService {
         registrarHistorial(
                 guardado,
                 creadoPor,
-                SisVars.REGISTRADO,
+                SisVars.HIST_CREACION,
                 null,
                 guardado.getEstado(),
                 null,
@@ -135,7 +135,7 @@ public class TicketService {
         registrarHistorial(
                 actualizado,
                 asignadoA,
-                SisVars.ASIGNADO,
+                SisVars.HIST_ASIGNACION,
                 estadoAnterior,
                 actualizado.getEstado(),
                 null,

@@ -1,0 +1,114 @@
+{
+  "info": {
+    "_postman_id": "5bfc032a-0d2e-4d12-933a-1512b9bc19e0",
+    "name": "Tickets",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "New Request",
+      "id": "855463e1-6bfa-4fe7-8880-2bdb59a7f5db",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseLocalUrl}}",
+          "host": [
+            "{{baseLocalUrl}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "id": "316682f4-8330-456c-bf90-45f6f6cb8441",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseLocalUrl}}/api/tickets/adjuntos/listar/2",
+          "host": [
+            "{{baseLocalUrl}}"
+          ],
+          "path": [
+            "api",
+            "tickets",
+            "adjuntos",
+            "listar",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "id": "ba1dd39e-9952-493a-9d43-197202bda294",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"ticketId\":1,\r\n    \"asignadoId\":3\r\n\r\n\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseLocalUrl}}/api/tickets/asignar",
+          "host": [
+            "{{baseLocalUrl}}"
+          ],
+          "path": [
+            "api",
+            "tickets",
+            "asignar"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Categorias",
+      "id": "c3639357-a89c-4de9-b450-0bee39bd8f9f",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseLocalUrl}}/api/categorias-ticket/listar",
+          "host": [
+            "{{baseLocalUrl}}"
+          ],
+          "path": [
+            "api",
+            "categorias-ticket",
+            "listar"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Departamentos",
+      "id": "b67c3224-7b4a-4f91-8959-585abfec999f",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "id": "6117e488-ff27-45a6-86aa-c0f113a80c45",
+      "key": "baseLocalUrl",
+      "value": ""
+    }
+  ]
+}
