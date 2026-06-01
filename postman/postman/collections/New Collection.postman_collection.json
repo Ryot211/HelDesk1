@@ -95,10 +95,18 @@
       "name": "Departamentos",
       "id": "b67c3224-7b4a-4f91-8959-585abfec999f",
       "request": {
-        "method": "GET",
+        "method": "POST",
         "header": [],
         "url": {
-          "raw": ""
+          "raw": "{{baseLocalUrl}}/api/categorias-ticket/listar",
+          "host": [
+            "{{baseLocalUrl}}"
+          ],
+          "path": [
+            "api",
+            "categorias-ticket",
+            "listar"
+          ]
         }
       },
       "response": []
@@ -106,7 +114,7 @@
   ],
   "variable": [
     {
-      "id": "6117e488-ff27-45a6-86aa-c0f113a80c45",
+      "id": "16c29038-4c2e-4c1f-8039-87d8a9bc0f8a",
       "key": "baseLocalUrl",
       "value": ""
     }

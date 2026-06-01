@@ -27,13 +27,13 @@ public class Ticket {
     private CategoriaTicket categoria;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departamento_id", referencedColumnName = "id")
-    private Departamento departamentoSolicitante;
+    private Departamento departamento;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_creacion", referencedColumnName = "id", nullable = false)
-    private Usuario creadoPor;
+    private Usuario usuarioCreacion;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_asignado", referencedColumnName = "id")
-    private Usuario asignadoA;
+    private Usuario usuarioAsignado;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaModificacion;
     private LocalDateTime fechaAsignacion;
@@ -42,7 +42,7 @@ public class Ticket {
     private LocalDateTime fechaCierre;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_finalizado", referencedColumnName = "id")
-    private Usuario cerradoPor;
+    private Usuario usuarioFinalizado;
     private String solucion;
 
 }

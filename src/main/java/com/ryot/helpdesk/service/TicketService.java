@@ -90,8 +90,8 @@ public class TicketService {
         ticket.setPrioridad(dto.getPrioridad() == null || dto.getPrioridad().isBlank() ? "MEDIA" : dto.getPrioridad());
         ticket.setEstado(SisVars.REGISTRADO);
         ticket.setCategoria(categoria);
-        ticket.setDepartamentoSolicitante(departamento);
-        ticket.setCreadoPor(creadoPor);
+        ticket.setDepartamento(departamento);
+        ticket.setUsuarioCreacion(creadoPor);
         ticket.setFechaCreacion(LocalDateTime.now());
 
         Ticket guardado = ticketRepo.save(ticket);
@@ -126,7 +126,7 @@ public class TicketService {
         Usuario asignadoA = usuarioRepo.findById(dto.getAsignadoId())
                 .orElseThrow(() -> new RuntimeException("No existe el usuario asignado con id: " + dto.getAsignadoId()));
         String estadoAnterior = ticket.getEstado();
-        ticket.setAsignadoA(asignadoA);
+        ticket.setUsuarioAsignado(asignadoA);
         ticket.setEstado(SisVars.ASIGNADO);
         ticket.setFechaAsignacion(LocalDateTime.now());
 
@@ -175,9 +175,9 @@ public class TicketService {
         }
 
         Ticket actualizado = ticketRepo.save(ticket);
-        Usuario usuarioAccion = actualizado.getAsignadoA() != null
-                ? actualizado.getAsignadoA()
-                : actualizado.getCreadoPor();
+        Usuario usuarioAccion = actualizado.getUsuarioAsignado() != null
+                ? actualizado.getUsuarioAsignado()
+                : actualizado.getUsuarioCreacion();
         registrarHistorial(
                 actualizado,
                 usuarioAccion,
@@ -186,7 +186,7 @@ public class TicketService {
                 actualizado.getEstado(),
                 null,
                 null,
-                actualizado.getAsignadoA(),
+                actualizado.getUsuarioAsignado(),
                 SisVars.OBS_CAMBIO_ESTADO
         );
 
@@ -215,7 +215,7 @@ public class TicketService {
         String estadoAnterior = ticket.getEstado();
 
         ticket.setSolucion(dto.getSolucion());
-        ticket.setCerradoPor(cerradoPor);
+        ticket.setUsuarioFinalizado(cerradoPor);
 
         ticket.setEstado(SisVars.CERRADO);
 
@@ -234,7 +234,7 @@ public class TicketService {
                 actualizado.getEstado(),
                 null,
                 null,
-                actualizado.getAsignadoA(),
+                actualizado.getUsuarioAsignado(),
                 SisVars.OBS_TICKET_CERRADO_SOLUCION
         );
 
@@ -337,7 +337,7 @@ public class TicketService {
                 null,
                 null,
                 null,
-                ticket.getAsignadoA(),
+                ticket.getUsuarioAsignado(),
                 SisVars.OBS_COMENTARIO_AGREGADO
         );
         return ticketComentarioMapper.toDto(guardado);
@@ -421,7 +421,7 @@ public class TicketService {
                 null,
                 null,
                 null,
-                ticket.getAsignadoA(),
+                ticket.getUsuarioAsignado(),
                 SisVars.OBS_ADJUNTO_REGISTRADO
 
         );
@@ -447,7 +447,7 @@ public class TicketService {
                 null,
                 null,
                 null,
-                adjunto.getTicket().getAsignadoA(),
+                adjunto.getTicket().getUsuarioAsignado(),
                 "Adjunto inactivado"
         );
 
