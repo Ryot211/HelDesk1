@@ -79,7 +79,7 @@ public class UsuarioService {
         Usuario guardado = usuarioRepo.save(usuario);
         return usuarioMapper.toDto(guardado);
     }
-
+    @Transactional
     public UsuarioDto actualizar(UsuarioDto dto) {
         validarActualizar(dto);
 

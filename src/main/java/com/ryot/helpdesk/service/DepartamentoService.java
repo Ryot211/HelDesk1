@@ -9,6 +9,7 @@ import com.ryot.helpdesk.utils.SisVars;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -56,6 +57,7 @@ public class DepartamentoService {
         if(entity.getEstadoRegistro()==null){
             entity.setEstadoRegistro(SisVars.Activo);
         }
+        entity.setFechaCreacion(LocalDateTime.now());
 
         Departamento guardad = departamentoRepo.save(entity);
         return departamentoMapper.toDto(guardad);
