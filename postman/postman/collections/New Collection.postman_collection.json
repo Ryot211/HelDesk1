@@ -48,24 +48,16 @@
       "request": {
         "method": "POST",
         "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"ticketId\":1,\r\n    \"asignadoId\":3\r\n\r\n\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
         "url": {
-          "raw": "{{baseLocalUrl}}/api/tickets/asignar",
+          "raw": "{{baseLocalUrl}}/api/tickets/buscar/1",
           "host": [
             "{{baseLocalUrl}}"
           ],
           "path": [
             "api",
             "tickets",
-            "asignar"
+            "buscar",
+            "1"
           ]
         }
       },
@@ -114,7 +106,7 @@
   ],
   "variable": [
     {
-      "id": "16c29038-4c2e-4c1f-8039-87d8a9bc0f8a",
+      "id": "ca1ecb3f-58c3-4387-bc89-68952222a0b2",
       "key": "baseLocalUrl",
       "value": ""
     }

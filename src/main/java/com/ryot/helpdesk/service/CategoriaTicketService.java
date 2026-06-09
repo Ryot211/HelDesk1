@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -56,7 +57,9 @@ public class CategoriaTicketService {
         if(entity.getEstadoRegistro()==null){
             entity.setEstadoRegistro(SisVars.Activo);
         }
+        entity.setFechaCreacion(LocalDateTime.now());
         CategoriaTicket guardado = categoriaTicketRepo.save(entity);
+
         return categoriaTicketMapper.toDto(guardado);
     }
 
