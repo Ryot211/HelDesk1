@@ -2,26 +2,5 @@ spring:
   application:
     name: helpdesk
 
-  datasource:
-    url: jdbc:postgresql://localhost:5432/Soporte_IT
-    username: practicausr25
-    password: practic35
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
-    open-in-view: false
-    properties:
-      hibernate:
-        default_schema: helpdesk
-        format_sql: true
-
-server:
-  port: 8080
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: TRACE
+  profiles:
+    active: local

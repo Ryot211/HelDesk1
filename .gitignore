@@ -33,4 +33,11 @@ build/
 .vscode/
 
 #### YML##
-application.yml
+target/
+.idea/
+*.iml
+
+src/main/resources/application-local.yml
+
+.env
+*.env

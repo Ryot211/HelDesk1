@@ -1,26 +1,20 @@
 package com.ryot.helpdesk.controller;
 
-
 import com.ryot.helpdesk.dto.Auth.LoginRequestDto;
-import com.ryot.helpdesk.dto.Usuario.UsuarioDto;
+import com.ryot.helpdesk.dto.Auth.LoginResponseDto;
 import com.ryot.helpdesk.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private AuthService authService;
+
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public UsuarioDto login(@RequestBody LoginRequestDto dto){
+    public LoginResponseDto login(@RequestBody LoginRequestDto dto) {
         return authService.login(dto);
     }
-
 }
