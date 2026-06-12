@@ -47,6 +47,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String email = jwtService.obtenerEmailDesdeToken(token);
 
+        String codigoRol = jwtService.obtenerRolDesdeToken(token);
+
         Usuario usuario = usuarioRepo.findByEmailIgnoreCase(email)
                 .orElse(null);
 
@@ -54,8 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
-        String codigoRol = usuario.getRol().getCodigo();
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(

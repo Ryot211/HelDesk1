@@ -38,6 +38,9 @@ public class JwtService {
         return obtenerClaims(token).getSubject();
     }
 
+    public String obtenerRolDesdeToken(String token) {
+        return obtenerClaims(token).get("rol", String.class);
+    }
     public boolean tokenValido(String token) {
         try {
             obtenerClaims(token);
