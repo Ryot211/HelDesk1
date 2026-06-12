@@ -2,6 +2,13 @@ package com.ryot.helpdesk.utils;
 
 public class SisVars {
 
+    //Roles
+    public static final String ADMIN ="ADMIN";
+    public static final String SOPORTE ="SOPORTE";
+    public static final String USUARIO ="USUARIO";
+
+
+
     public static final String Activo = "ACTIVO";
 
     public static final String INACTIVO = "INACTIVO";
