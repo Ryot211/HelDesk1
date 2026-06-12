@@ -7,6 +7,7 @@ import com.ryot.helpdesk.dto.Usuario.UsuarioPasswordDto;
 import com.ryot.helpdesk.entity.Departamento;
 import com.ryot.helpdesk.entity.Rol;
 import com.ryot.helpdesk.entity.Usuario;
+import com.ryot.helpdesk.exception.BusinessException;
 import com.ryot.helpdesk.mapper.UsuarioMapper;
 import com.ryot.helpdesk.repository.DepartamentoRepo;
 import com.ryot.helpdesk.repository.RolRepo;
@@ -47,7 +48,7 @@ public class UsuarioService {
     }
     @Transactional(readOnly = true)
     public UsuarioDto buscarPorId(Long id){
-        Usuario usuario = usuarioRepo.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"+id));
+        Usuario usuario = usuarioRepo.findById(id).orElseThrow(() -> new BusinessException("Usuario no encontrado"+id));
         return usuarioMapper.toDto(usuario);
     }
 
@@ -55,14 +56,14 @@ public class UsuarioService {
         validarCrear(dto);
 
         if (usuarioRepo.existsByEmailIgnoreCase(dto.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con el email: " + dto.getEmail());
+            throw new BusinessException("Ya existe un usuario con el email: " + dto.getEmail());
         }
 
         Rol rol = rolRepo.findById(dto.getRolId())
-                .orElseThrow(() -> new RuntimeException("No existe el rol con id: " + dto.getRolId()));
+                .orElseThrow(() -> new BusinessException("No existe el rol con id: " + dto.getRolId()));
 
         Departamento departamento = departamentoRepo.findById(dto.getDepartamentoId())
-                .orElseThrow(() -> new RuntimeException("No existe el departamento con id: " + dto.getDepartamentoId()));
+                .orElseThrow(() -> new BusinessException("No existe el departamento con id: " + dto.getDepartamentoId()));
 
         Usuario usuario = new Usuario();
         usuario.setRol(rol);
@@ -84,20 +85,20 @@ public class UsuarioService {
         validarActualizar(dto);
 
         Usuario usuario = usuarioRepo.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario con id: " + dto.getId()));
 
         if (usuarioRepo.existsByEmailIgnoreCaseAndIdNot(dto.getEmail(), dto.getId())) {
-            throw new RuntimeException("Ya existe otro usuario con el email: " + dto.getEmail());
+            throw new BusinessException("Ya existe otro usuario con el email: " + dto.getEmail());
         }
 
         Long rolId = dto.getRol().getId();
         Long departamentoId = dto.getDepartamento().getId();
 
         Rol rol = rolRepo.findById(rolId)
-                .orElseThrow(() -> new RuntimeException("No existe el rol con id: " + rolId));
+                .orElseThrow(() -> new BusinessException("No existe el rol con id: " + rolId));
 
         Departamento departamento = departamentoRepo.findById(departamentoId)
-                .orElseThrow(() -> new RuntimeException("No existe el departamento con id: " + departamentoId));
+                .orElseThrow(() -> new BusinessException("No existe el departamento con id: " + departamentoId));
 
         usuario.setRol(rol);
         usuario.setDepartamento(departamento);
@@ -116,7 +117,7 @@ public class UsuarioService {
 
     public void inactivar(Long id) {
         Usuario usuario = usuarioRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + id));
+                .orElseThrow(() -> new BusinessException("No existe el usuario con id: " + id));
 
         usuario.setEstadoRegistro(SisVars.INACTIVO);
         usuarioRepo.save(usuario);
@@ -126,7 +127,7 @@ public class UsuarioService {
         validarCambioPassword(dto);
 
         Usuario usuario = usuarioRepo.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario con id: " + dto.getId()));
 
         boolean passwordActualCorrecta = passwordEncoder.matches(
                 dto.getPasswordActual(),
@@ -134,7 +135,7 @@ public class UsuarioService {
         );
 
         if (!passwordActualCorrecta) {
-            throw new RuntimeException("La contraseña actual no es correcta");
+            throw new BusinessException("La contraseña actual no es correcta");
         }
 
         String nuevoHash = passwordEncoder.encode(dto.getPasswordNueva());
@@ -144,59 +145,59 @@ public class UsuarioService {
     }
     private void validarCrear(UsuarioCrearDto dto) {
         if (dto.getRolId() == null) {
-            throw new RuntimeException("El rol es obligatorio");
+            throw new BusinessException("El rol es obligatorio");
         }
 
         if (dto.getDepartamentoId() == null) {
-            throw new RuntimeException("El departamento es obligatorio");
+            throw new BusinessException("El departamento es obligatorio");
         }
 
         if (dto.getNombres() == null || dto.getNombres().isBlank()) {
-            throw new RuntimeException("Los nombres son obligatorios");
+            throw new BusinessException("Los nombres son obligatorios");
         }
 
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            throw new RuntimeException("El email es obligatorio");
+            throw new BusinessException("El email es obligatorio");
         }
 
         if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new RuntimeException("La contraseña es obligatoria");
+            throw new BusinessException("La contraseña es obligatoria");
         }
     }
 
     private void validarActualizar(UsuarioDto dto) {
         if (dto.getId() == null) {
-            throw new RuntimeException("El id del usuario es obligatorio");
+            throw new BusinessException("El id del usuario es obligatorio");
         }
 
         if (dto.getRol() == null || dto.getRol().getId() == null) {
-            throw new RuntimeException("El rol es obligatorio");
+            throw new BusinessException("El rol es obligatorio");
         }
 
         if (dto.getDepartamento() == null || dto.getDepartamento().getId() == null) {
-            throw new RuntimeException("El departamento es obligatorio");
+            throw new BusinessException("El departamento es obligatorio");
         }
 
         if (dto.getNombres() == null || dto.getNombres().isBlank()) {
-            throw new RuntimeException("Los nombres son obligatorios");
+            throw new BusinessException("Los nombres son obligatorios");
         }
 
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            throw new RuntimeException("El email es obligatorio");
+            throw new BusinessException("El email es obligatorio");
         }
     }
 
     private void validarCambioPassword(UsuarioPasswordDto dto) {
         if (dto.getId() == null) {
-            throw new RuntimeException("El id del usuario es obligatorio");
+            throw new BusinessException("El id del usuario es obligatorio");
         }
 
         if (dto.getPasswordActual() == null || dto.getPasswordActual().isBlank()) {
-            throw new RuntimeException("La contraseña actual es obligatoria");
+            throw new BusinessException("La contraseña actual es obligatoria");
         }
 
         if (dto.getPasswordNueva() == null || dto.getPasswordNueva().isBlank()) {
-            throw new RuntimeException("La nueva contraseña es obligatoria");
+            throw new BusinessException("La nueva contraseña es obligatoria");
         }
     }
 }

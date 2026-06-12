@@ -3,6 +3,7 @@ package com.ryot.helpdesk.service;
 
 import com.ryot.helpdesk.dto.Departamento.DepartamentoDto;
 import com.ryot.helpdesk.entity.Departamento;
+import com.ryot.helpdesk.exception.BusinessException;
 import com.ryot.helpdesk.mapper.DepartamentoMapper;
 import com.ryot.helpdesk.repository.DepartamentoRepo;
 import com.ryot.helpdesk.utils.SisVars;
@@ -33,7 +34,7 @@ public class DepartamentoService {
     }
 
     public DepartamentoDto buscarporID(Long id) {
-        Departamento departamento = departamentoRepo.findById(id).orElseThrow(() -> new RuntimeException("No existe el departamento con el id:" +id));
+        Departamento departamento = departamentoRepo.findById(id).orElseThrow(() -> new BusinessException("No existe el departamento con el id:" +id));
         return  departamentoMapper.toDto(departamento);
     }
     public DepartamentoDto guardar(DepartamentoDto dto){
@@ -48,7 +49,7 @@ public class DepartamentoService {
 
     private DepartamentoDto crearNuevo(DepartamentoDto dto) {
         if(departamentoRepo.existsByNombreIgnoreCase(dto.getNombre())){
-            throw new RuntimeException("Departamento ya existe un departamento con este nombre" + dto.getNombre() );
+            throw new BusinessException("Ya existe un Departamento con este nombre: " + dto.getNombre() );
         }
 
         Departamento entity = departamentoMapper.toEntity(dto);
@@ -65,9 +66,9 @@ public class DepartamentoService {
     
     private DepartamentoDto actualizarExistente(DepartamentoDto dto){
         Departamento depart = departamentoRepo.findById(dto.getId())
-                .orElseThrow(()-> new RuntimeException("No existe el departamento con el id: "+ dto.getId()));
+                .orElseThrow(()-> new BusinessException("No existe el departamento con el id: "+ dto.getId()));
         if(departamentoRepo.existsByNombreIgnoreCaseAndIdNot(dto.getNombre(), dto.getId())){
-            throw new RuntimeException("Ya existe un departamento con el nombre "+ dto.getNombre());
+            throw new BusinessException("Ya existe un departamento con el nombre "+ dto.getNombre());
         }
         depart.setNombre(dto.getNombre());
         depart.setDescripcion(dto.getDescripcion());
@@ -83,14 +84,14 @@ public class DepartamentoService {
 
     public void inactivar(Long id){
         Departamento departamento = departamentoRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe el departamento con el id: "+ id));
+                .orElseThrow(() -> new BusinessException("No existe el departamento con el id: "+ id));
         departamento.setEstadoRegistro(SisVars.INACTIVO);
         departamentoRepo.save(departamento);
     }
 
     private void validatosObligatorios (DepartamentoDto dto){
         if(dto.getNombre() == null || dto.getNombre().isBlank()){
-            throw new RuntimeException("El nombre del departamento es obligatorio");
+            throw new BusinessException("El nombre del departamento es obligatorio");
         }
     }
 

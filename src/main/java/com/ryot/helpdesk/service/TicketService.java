@@ -6,6 +6,7 @@ import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAjuntoDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.entity.*;
+import com.ryot.helpdesk.exception.BusinessException;
 import com.ryot.helpdesk.mapper.TicketAdjuntoMapper;
 import com.ryot.helpdesk.mapper.TicketComentarioMapper;
 import com.ryot.helpdesk.mapper.TicketHistorialMapper;
@@ -56,7 +57,7 @@ public class TicketService {
     @Transactional (readOnly = true)
     public List<TicketDto> listarPorEstado(String estado) {
         if (estado == null || estado.isBlank()) {
-            throw new RuntimeException("El estado es obligatorio");
+            throw new BusinessException("El estado es obligatorio");
         }
 
         List<Ticket> tickets = ticketRepo.findByEstadoOrderByIdDesc(estado);
@@ -66,7 +67,7 @@ public class TicketService {
     @Transactional (readOnly = true)
     public TicketDto buscarPorId(Long id) {
         Ticket ticket = ticketRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + id));
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + id));
 
         return ticketMapper.toDto(ticket);
     }
@@ -75,13 +76,13 @@ public class TicketService {
         validarCrear(dto);
 
         CategoriaTicket categoria = categoriaTicketRepo.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new RuntimeException("No existe la categoría con id: " + dto.getCategoriaId()));
+                .orElseThrow(() -> new BusinessException("No existe la categoría con id: " + dto.getCategoriaId()));
 
         Departamento departamento = departamentoRepo.findById(dto.getDepartamentoSolicitanteId())
-                .orElseThrow(() -> new RuntimeException("No existe el departamento con id: " + dto.getDepartamentoSolicitanteId()));
+                .orElseThrow(() -> new BusinessException("No existe el departamento con id: " + dto.getDepartamentoSolicitanteId()));
 
         Usuario creadoPor = usuarioRepo.findById(dto.getCreadoPorId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario creador con id: " + dto.getCreadoPorId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario creador con id: " + dto.getCreadoPorId()));
 
         Ticket ticket = new Ticket();
         ticket.setCodigo(generarCodigoTicket());
@@ -113,18 +114,18 @@ public class TicketService {
     @Transactional
     public TicketDto asignar(TicketAsignarDto dto) {
         if (dto.getTicketId() == null) {
-            throw new RuntimeException("El id del ticket es obligatorio");
+            throw new BusinessException("El id del ticket es obligatorio");
         }
 
         if (dto.getAsignadoId() == null) {
-            throw new RuntimeException("El usuario asignado es obligatorio");
+            throw new BusinessException("El usuario asignado es obligatorio");
         }
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
-                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + dto.getTicketId()));
 
         Usuario asignadoA = usuarioRepo.findById(dto.getAsignadoId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario asignado con id: " + dto.getAsignadoId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario asignado con id: " + dto.getAsignadoId()));
         String estadoAnterior = ticket.getEstado();
         ticket.setUsuarioAsignado(asignadoA);
         ticket.setEstado(SisVars.ASIGNADO);
@@ -148,17 +149,17 @@ public class TicketService {
     @Transactional
     public TicketDto cambiarEstado(TicketEstadoDto dto) {
         if (dto.getTicketId() == null) {
-            throw new RuntimeException("El id del ticket es obligatorio");
+            throw new BusinessException("El id del ticket es obligatorio");
         }
 
         if (dto.getEstado() == null || dto.getEstado().isBlank()) {
-            throw new RuntimeException("El estado es obligatorio");
+            throw new BusinessException("El estado es obligatorio");
         }
 
         validarEstado(dto.getEstado());
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
-                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + dto.getTicketId()));
         String estadoAnterior = ticket.getEstado();
         ticket.setEstado(dto.getEstado());
 
@@ -196,22 +197,22 @@ public class TicketService {
     @Transactional
     public TicketDto cerrarConSolucion(TicketSolucionDto dto) {
         if (dto.getTicketId() == null) {
-            throw new RuntimeException("El id del ticket es obligatorio");
+            throw new BusinessException("El id del ticket es obligatorio");
         }
 
         if (dto.getCerradoPorId() == null) {
-            throw new RuntimeException("El usuario que cierra el ticket es obligatorio");
+            throw new BusinessException("El usuario que cierra el ticket es obligatorio");
         }
 
         if (dto.getSolucion() == null || dto.getSolucion().isBlank()) {
-            throw new RuntimeException("La solución es obligatoria");
+            throw new BusinessException("La solución es obligatoria");
         }
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
-                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + dto.getTicketId()));
 
         Usuario cerradoPor = usuarioRepo.findById(dto.getCerradoPorId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getCerradoPorId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario con id: " + dto.getCerradoPorId()));
         String estadoAnterior = ticket.getEstado();
 
         ticket.setSolucion(dto.getSolucion());
@@ -244,23 +245,23 @@ public class TicketService {
 
     private void validarCrear(TicketCrearDto dto) {
         if (dto.getTitulo() == null || dto.getTitulo().isBlank()) {
-            throw new RuntimeException("El título del ticket es obligatorio");
+            throw new BusinessException("El título del ticket es obligatorio");
         }
 
         if (dto.getDescripcion() == null || dto.getDescripcion().isBlank()) {
-            throw new RuntimeException("La descripción del ticket es obligatoria");
+            throw new BusinessException("La descripción del ticket es obligatoria");
         }
 
         if (dto.getCategoriaId() == null) {
-            throw new RuntimeException("La categoría del ticket es obligatoria");
+            throw new BusinessException("La categoría del ticket es obligatoria");
         }
 
         if (dto.getDepartamentoSolicitanteId() == null) {
-            throw new RuntimeException("El departamento solicitante es obligatorio");
+            throw new BusinessException("El departamento solicitante es obligatorio");
         }
 
         if (dto.getCreadoPorId() == null) {
-            throw new RuntimeException("El usuario creador es obligatorio");
+            throw new BusinessException("El usuario creador es obligatorio");
         }
     }
 
@@ -276,7 +277,7 @@ public class TicketService {
         );
 
         if (!estadosPermitidos.contains(estado)) {
-            throw new RuntimeException("Estado no permitido: " + estado);
+            throw new BusinessException("Estado no permitido: " + estado);
         }
     }
 
@@ -299,7 +300,7 @@ public class TicketService {
     @Transactional(readOnly = true)
     public List<TicketComentarioDto> listarComentarios(Long ticketId) {
         if (ticketId == null) {
-            throw new RuntimeException("El id del ticket es obligatorio");
+            throw new BusinessException("El id del ticket es obligatorio");
         }
 
         List<TicketComentario> comentarios =
@@ -312,10 +313,10 @@ public class TicketService {
         validarCrearComentario(dto);
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
-                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + dto.getTicketId()));
 
         Usuario usuario = usuarioRepo.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getUsuarioId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario con id: " + dto.getUsuarioId()));
 
         TicketComentario comentario = new TicketComentario();
         comentario.setTicket(ticket);
@@ -346,15 +347,15 @@ public class TicketService {
 
     private void validarCrearComentario(TicketComentarioCrearDto dto) {
         if (dto.getTicketId() == null) {
-            throw new RuntimeException("El ticket es obligatorio");
+            throw new BusinessException("El ticket es obligatorio");
         }
 
         if (dto.getUsuarioId() == null) {
-            throw new RuntimeException("El usuario es obligatorio");
+            throw new BusinessException("El usuario es obligatorio");
         }
 
         if (dto.getComentario() == null || dto.getComentario().isBlank()) {
-            throw new RuntimeException("El comentario es obligatorio");
+            throw new BusinessException("El comentario es obligatorio");
         }
 
         if (dto.getTipo() != null && !dto.getTipo().isBlank()) {
@@ -370,7 +371,7 @@ public class TicketService {
         );
 
         if (!tiposPermitidos.contains(tipo)) {
-            throw new RuntimeException("Tipo de comentario no permitido: " + tipo);
+            throw new BusinessException("Tipo de comentario no permitido: " + tipo);
         }
     }
 
@@ -379,7 +380,7 @@ public class TicketService {
     @Transactional(readOnly = true)
     public List<TicketAjuntoDto> listarAdjuntos(Long ticketId) {
         if (ticketId == null) {
-            throw new RuntimeException("El id del ticket es obligatorio");
+            throw new BusinessException("El id del ticket es obligatorio");
         }
 
         List<TicketAdjunto> adjuntos =
@@ -396,10 +397,10 @@ public class TicketService {
         validarRegistrarAdjunto(dto);
 
         Ticket ticket = ticketRepo.findById(dto.getTicketId())
-                .orElseThrow(() -> new RuntimeException("No existe el ticket con id: " + dto.getTicketId()));
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + dto.getTicketId()));
 
         Usuario subidoPor = usuarioRepo.findById(dto.getSubidoPorId())
-                .orElseThrow(() -> new RuntimeException("No existe el usuario con id: " + dto.getSubidoPorId()));
+                .orElseThrow(() -> new BusinessException("No existe el usuario con id: " + dto.getSubidoPorId()));
 
         TicketAdjunto adjunto = new TicketAdjunto();
         adjunto.setTicket(ticket);
@@ -431,11 +432,11 @@ public class TicketService {
     @Transactional
     public void inactivarAdjunto(Long id) {
         if (id == null) {
-            throw new RuntimeException("El id del adjunto es obligatorio");
+            throw new BusinessException("El id del adjunto es obligatorio");
         }
 
         TicketAdjunto adjunto = ticketAdjuntoRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe el adjunto con id: " + id));
+                .orElseThrow(() -> new BusinessException("No existe el adjunto con id: " + id));
 
         adjunto.setEstadoRegistro(SisVars.INACTIVO);
         adjunto.setFechaCreacion(LocalDateTime.now());
@@ -456,23 +457,23 @@ public class TicketService {
 
     private void validarRegistrarAdjunto(TicketAdjuntoCrearDto dto) {
         if (dto.getTicketId() == null) {
-            throw new RuntimeException("El ticket es obligatorio");
+            throw new BusinessException("El ticket es obligatorio");
         }
 
         if (dto.getSubidoPorId() == null) {
-            throw new RuntimeException("El usuario que sube el archivo es obligatorio");
+            throw new BusinessException("El usuario que sube el archivo es obligatorio");
         }
 
         if (dto.getNombreOriginal() == null || dto.getNombreOriginal().isBlank()) {
-            throw new RuntimeException("El nombre original del archivo es obligatorio");
+            throw new BusinessException("El nombre original del archivo es obligatorio");
         }
 
         if (dto.getNombreArchivo() == null || dto.getNombreArchivo().isBlank()) {
-            throw new RuntimeException("El nombre interno del archivo es obligatorio");
+            throw new BusinessException("El nombre interno del archivo es obligatorio");
         }
 
         if (dto.getRutaArchivo() == null || dto.getRutaArchivo().isBlank()) {
-            throw new RuntimeException("La ruta del archivo es obligatoria");
+            throw new BusinessException("La ruta del archivo es obligatoria");
         }
     }
 //Ticket Historial
@@ -480,7 +481,7 @@ public class TicketService {
     @Transactional(readOnly = true)
     public List<TicketHistorialDto> listarHistorial(Long ticketId) {
         if(ticketId == null) {
-            throw new RuntimeException("El id del ticket es obligatorio");
+            throw new BusinessException("El id del ticket es obligatorio");
         }
 
         List<TicketHistorial> historial =

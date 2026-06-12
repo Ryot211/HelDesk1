@@ -2,6 +2,7 @@ package com.ryot.helpdesk.service;
 
 import com.ryot.helpdesk.dto.Categoria.CategoriaTicketDto;
 import com.ryot.helpdesk.entity.CategoriaTicket;
+import com.ryot.helpdesk.exception.BusinessException;
 import com.ryot.helpdesk.mapper.CategoriaTicketMapper;
 import com.ryot.helpdesk.repository.CategoriaTicketRepo;
 import com.ryot.helpdesk.utils.SisVars;
@@ -34,13 +35,13 @@ public class CategoriaTicketService {
     }
 
     public CategoriaTicketDto buscarPorId(Long id) {
-        CategoriaTicket categoria = categoriaTicketRepo.findById(id).orElseThrow(() -> new RuntimeException("Categoria no encontrada"+id));
+        CategoriaTicket categoria = categoriaTicketRepo.findById(id).orElseThrow(() -> new BusinessException("Categoria no encontrada"+id));
         return categoriaTicketMapper.toDto(categoria);
     }
 
     public CategoriaTicketDto guardar(CategoriaTicketDto dto) {
         if(dto.getNombre() == null|| dto.getNombre().isBlank()){
-            throw new RuntimeException("Nombre requerido");
+            throw new BusinessException("Nombre requerido");
         }
         if(dto.getId() == null){
             return CreaNuevo(dto);
@@ -49,7 +50,7 @@ public class CategoriaTicketService {
     }
     private CategoriaTicketDto CreaNuevo(CategoriaTicketDto dto) {
         if(categoriaTicketRepo.existsByNombreIgnoreCase(dto.getNombre())){
-            throw new RuntimeException("Ya existe una categoria con ese nombre :"+dto.getNombre());
+            throw new BusinessException("Ya existe una categoria con ese nombre :"+dto.getNombre());
         }
         CategoriaTicket entity = categoriaTicketMapper.toEntity(dto);
         entity.setId(null);
@@ -65,10 +66,10 @@ public class CategoriaTicketService {
 
     private CategoriaTicketDto ActualizarRegistro(CategoriaTicketDto dto) {
         CategoriaTicket categoria = categoriaTicketRepo.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"+dto.getId()));
+                .orElseThrow(() -> new BusinessException("Categoria no encontrada"+dto.getId()));
 
         if(categoriaTicketRepo.existsByNombreIgnoreCaseAndIdNot(dto.getNombre(),dto.getId())){
-            throw new RuntimeException("Nombre existente"+dto.getNombre());
+            throw new BusinessException("Nombre existente"+dto.getNombre());
         }
         categoria.setNombre(dto.getNombre());
         categoria.setDescripcion(dto.getDescripcion());
@@ -82,7 +83,7 @@ public class CategoriaTicketService {
 
     public void inactivar (Long id ){
         CategoriaTicket categoria = categoriaTicketRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada"+id));
+                .orElseThrow(() -> new BusinessException("Categoria no encontrada"+id));
         categoria.setEstadoRegistro(SisVars.INACTIVO);
         categoriaTicketRepo.save(categoria);
     }

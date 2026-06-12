@@ -4,6 +4,7 @@ import com.ryot.helpdesk.dto.Auth.LoginRequestDto;
 import com.ryot.helpdesk.dto.Auth.LoginResponseDto;
 import com.ryot.helpdesk.dto.Usuario.UsuarioDto;
 import com.ryot.helpdesk.entity.Usuario;
+import com.ryot.helpdesk.exception.BusinessException;
 import com.ryot.helpdesk.mapper.UsuarioMapper;
 import com.ryot.helpdesk.repository.UsuarioRepo;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,10 @@ public class AuthService {
         validarLogin(dto);
 
         Usuario usuario = usuarioRepo.findByEmailIgnoreCase(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
+                .orElseThrow(() -> new BusinessException("Credenciales incorrectas"));
 
         if (!"ACTIVO".equals(usuario.getEstadoRegistro())) {
-            throw new RuntimeException("El usuario está inactivo");
+            throw new BusinessException("El usuario está inactivo");
         }
 
         boolean passwordCorrecto = passwordEncoder.matches(
@@ -37,7 +38,7 @@ public class AuthService {
         );
 
         if (!passwordCorrecto) {
-            throw new RuntimeException("Credenciales incorrectas");
+            throw new BusinessException("Credenciales incorrectas");
         }
 
         String token = jwtService.generarToken(usuario);
@@ -48,11 +49,11 @@ public class AuthService {
 
     private void validarLogin(LoginRequestDto dto) {
         if (dto.getEmail() == null || dto.getEmail().isBlank()) {
-            throw new RuntimeException("El email es obligatorio");
+            throw new BusinessException("El email es obligatorio");
         }
 
         if (dto.getPassword() == null || dto.getPassword().isBlank()) {
-            throw new RuntimeException("La contraseña es obligatoria");
+            throw new BusinessException("La contraseña es obligatoria");
         }
     }
 }

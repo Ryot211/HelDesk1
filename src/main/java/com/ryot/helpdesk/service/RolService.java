@@ -2,6 +2,7 @@ package com.ryot.helpdesk.service;
 
 import com.ryot.helpdesk.dto.Rol.RolDto;
 import com.ryot.helpdesk.entity.Rol;
+import com.ryot.helpdesk.exception.BusinessException;
 import com.ryot.helpdesk.mapper.RolMapper;
 import com.ryot.helpdesk.repository.RolRepo;
 import com.ryot.helpdesk.utils.SisVars;
@@ -28,7 +29,7 @@ public class RolService {
     }
 
     public RolDto buscarPorId(Long id){
-        Rol rol = rolRepo.findById(id).orElseThrow(() -> new RuntimeException("No existe el rol con el id:" +id));
+        Rol rol = rolRepo.findById(id).orElseThrow(() -> new BusinessException("No existe el rol con el id:" +id));
 
         return rolMapper.toDto(rol);
     }
@@ -46,7 +47,7 @@ public class RolService {
     private RolDto crearNuevo(RolDto dto) {
         rolRepo.findByCodigo(dto.getCodigo())
                 .ifPresent(rol -> {
-                    throw new RuntimeException("Ya existe un rol con el código: " + dto.getCodigo());
+                    throw new BusinessException("Ya existe un rol con el código: " + dto.getCodigo());
                 });
 
         Rol entity = rolMapper.toEntity(dto);
@@ -62,7 +63,7 @@ public class RolService {
 
     private RolDto actualizarExistente(RolDto dto) {
         Rol rol = rolRepo.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("No existe el rol con el id: " + dto.getId()));
+                .orElseThrow(() -> new BusinessException("No existe el rol con el id: " + dto.getId()));
         rol.setCodigo(dto.getCodigo());
         rol.setNombre(dto.getNombre());
         rol.setDescripcion(dto.getDescripcion());
@@ -77,7 +78,7 @@ public class RolService {
 
     public void inactivar(Long id) {
         Rol rol = rolRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe el rol con id: " + id));
+                .orElseThrow(() -> new BusinessException("No existe el rol con id: " + id));
 
         rol.setEstadoRegistro("INACTIVO");
         rolRepo.save(rol);
@@ -85,11 +86,11 @@ public class RolService {
 
     private void validarDatosObligatorios(RolDto dto) {
         if (dto.getCodigo() == null || dto.getCodigo().isBlank()) {
-            throw new RuntimeException("El código del rol es obligatorio");
+            throw new BusinessException("El código del rol es obligatorio");
         }
 
         if (dto.getNombre() == null || dto.getNombre().isBlank()) {
-            throw new RuntimeException("El nombre del rol es obligatorio");
+            throw new BusinessException("El nombre del rol es obligatorio");
         }
     }
 
