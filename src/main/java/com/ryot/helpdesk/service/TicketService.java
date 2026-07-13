@@ -3,6 +3,7 @@ package com.ryot.helpdesk.service;
 import com.ryot.helpdesk.dto.Ticket.*;
 import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAdjuntoCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAjuntoDto;
+import com.ryot.helpdesk.dto.Ticket.TicketComentario.ArchivoDescargaDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.entity.*;
@@ -15,6 +16,7 @@ import com.ryot.helpdesk.repository.*;
 import com.ryot.helpdesk.utils.SisVars;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -571,5 +573,33 @@ public class TicketService {
 
         historial.setObservacion(observacion);
         ticketHistorialRepo.save(historial);
+    }
+    @Transactional(readOnly = true)
+    public ArchivoDescargaDto descargarAdjunto(Long adjuntoId) {
+
+        if (adjuntoId == null) {
+            throw new BusinessException("El id del adjunto es obligatorio.");
+        }
+
+        TicketAdjunto adjunto = ticketAdjuntoRepo.findById(adjuntoId)
+                .orElseThrow(() -> new BusinessException("No existe el adjunto con id: " + adjuntoId));
+
+        if (!SisVars.Activo.equals(adjunto.getEstadoRegistro())) {
+            throw new BusinessException("El adjunto no está activo.");
+        }
+
+        Resource resource = archivoStorageService.cargarArchivo(adjunto.getRutaArchivo());
+
+        String tipoContenido = adjunto.getTipoContenido();
+
+        if (tipoContenido == null || tipoContenido.isBlank()) {
+            tipoContenido = "application/octet-stream";
+        }
+
+        return new ArchivoDescargaDto(
+                resource,
+                adjunto.getNombreOriginal(),
+                tipoContenido
+        );
     }
 }

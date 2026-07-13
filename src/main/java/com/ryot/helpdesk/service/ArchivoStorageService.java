@@ -15,6 +15,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+
+import java.net.MalformedURLException;
 
 @Service
 public class ArchivoStorageService {
@@ -101,6 +105,32 @@ public class ArchivoStorageService {
     private void validarExtension(String extension) {
         if(!EXTENSIONES_PERMITIDAS.contains(extension)){
             throw new BusinessException("Tipo de archivo no permitido");
+        }
+    }
+    public Resource cargarArchivo(String rutaArchivo) {
+        try {
+            Path baseDir = Paths.get(uploadDir)
+                    .toAbsolutePath()
+                    .normalize();
+
+            Path ruta = Paths.get(rutaArchivo)
+                    .toAbsolutePath()
+                    .normalize();
+
+            if (!ruta.startsWith(baseDir)) {
+                throw new BusinessException("Ruta de archivo no permitida.");
+            }
+
+            Resource resource = new UrlResource(ruta.toUri());
+
+            if (!resource.exists() || !resource.isReadable()) {
+                throw new BusinessException("El archivo no existe o no se puede leer.");
+            }
+
+            return resource;
+
+        } catch (MalformedURLException e) {
+            throw new BusinessException("La ruta del archivo no es válida.");
         }
     }
 }

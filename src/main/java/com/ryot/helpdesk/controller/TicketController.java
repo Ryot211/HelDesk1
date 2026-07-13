@@ -4,16 +4,22 @@ package com.ryot.helpdesk.controller;
 import com.ryot.helpdesk.dto.Ticket.*;
 import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAdjuntoCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAjuntoDto;
+import com.ryot.helpdesk.dto.Ticket.TicketComentario.ArchivoDescargaDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.service.TicketService;
 import com.ryot.helpdesk.utils.SisVars;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -104,5 +110,19 @@ public class TicketController {
     ) {
         return ticketService.subirAdjunto(ticketId, archivo);
     }
+    @GetMapping("/adjuntos/descargar/{id}")
+    public ResponseEntity<Resource> descargarAdjunto(@PathVariable Long id) {
 
+        ArchivoDescargaDto archivo = ticketService.descargarAdjunto(id);
+
+        ContentDisposition contentDisposition = ContentDisposition
+                .attachment()
+                .filename(archivo.getNombreOriginal(), StandardCharsets.UTF_8)
+                .build();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(archivo.getTipoContenido()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                .body(archivo.getResource());
+    }
 }
