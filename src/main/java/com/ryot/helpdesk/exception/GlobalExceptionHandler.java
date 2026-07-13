@@ -64,6 +64,7 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request
     ){
+        ex.printStackTrace();
         return construirRespuesta(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Paso algo inesperado internamente",

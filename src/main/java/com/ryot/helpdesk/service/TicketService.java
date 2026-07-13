@@ -15,8 +15,10 @@ import com.ryot.helpdesk.repository.*;
 import com.ryot.helpdesk.utils.SisVars;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,6 +50,8 @@ public class TicketService {
     private TicketHistorialRepo ticketHistorialRepo;
     @Autowired
     private TicketHistorialMapper  ticketHistorialMapper;
+    @Autowired
+    private ArchivoStorageService archivoStorageService;
 
     @Transactional (readOnly = true)
     public List<TicketDto> listarTodos(){
@@ -427,6 +431,58 @@ public class TicketService {
 
         );
         return ticketAdjuntoMapper.toDto(guardado);
+    }
+
+    @Transactional
+    public TicketAjuntoDto subirAdjunto(Long ticketId, MultipartFile archivo) {
+        Ticket ticket = ticketRepo.findById(ticketId)
+                .orElseThrow(() -> new BusinessException("No existe el ticket con id: " + ticketId));
+
+        Usuario usuarioAutenticado = obtenerUsuarioAutenticado();
+
+        ArchivoGuardadoDto archivoGuardado = archivoStorageService.guardarArchivoTicket(
+                ticketId,
+                archivo
+        );
+
+        TicketAdjunto adjunto = new TicketAdjunto();
+        adjunto.setTicket(ticket);
+        adjunto.setUsuario(usuarioAutenticado);
+        adjunto.setNombreOriginal(archivoGuardado.getNombreOriginal());
+
+        // Usa el setter real de tu entidad.
+        // Si en tu entidad está con typo, usa setNombreAchivo(...)
+        adjunto.setNombreAchivo(archivoGuardado.getNombreArchivo());
+
+        adjunto.setRutaArchivo(archivoGuardado.getRutaArchivo());
+        adjunto.setTipoContenido(archivoGuardado.getTipoContenido());
+        adjunto.setTamanioBytes(archivoGuardado.getTamanioBytes());
+        adjunto.setEstadoRegistro(SisVars.Activo);
+        adjunto.setFechaCreacion(LocalDateTime.now());
+
+        TicketAdjunto guardado = ticketAdjuntoRepo.save(adjunto);
+
+        registrarHistorial(
+                ticket,
+                usuarioAutenticado,
+                SisVars.HIST_ADJUNTO,
+                null,
+                null,
+                null,
+                null,
+                ticket.getUsuarioAsignado(),
+                SisVars.OBS_ADJUNTO_REGISTRADO
+        );
+
+        return ticketAdjuntoMapper.toDto(guardado);
+    }
+    private Usuario obtenerUsuarioAutenticado() {
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication().
+                getName();
+
+        return usuarioRepo.findByEmailIgnoreCase(email)
+                .orElseThrow(()-> new BusinessException("Usuario no encontrado"));
     }
 
     @Transactional

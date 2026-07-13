@@ -7,9 +7,12 @@ import com.ryot.helpdesk.dto.Ticket.TicketAdjunto.TicketAjuntoDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioCrearDto;
 import com.ryot.helpdesk.dto.Ticket.TicketComentario.TicketComentarioDto;
 import com.ryot.helpdesk.service.TicketService;
+import com.ryot.helpdesk.utils.SisVars;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,41 +24,41 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping("/listar")
-    public List<TicketDto> listarTodos(){
+    public List<TicketDto> listarTodos() {
         return ticketService.listarTodos();
     }
 
     @PostMapping("/listar-por-estado/{estado}")
-    public List<TicketDto> listarPorEstado(@PathVariable String estado){
+    public List<TicketDto> listarPorEstado(@PathVariable String estado) {
         return ticketService.listarPorEstado(estado);
     }
 
     @PostMapping("/buscar/{id}")
-    public TicketDto buscar(@PathVariable Long id){
+    public TicketDto buscar(@PathVariable Long id) {
         return ticketService.buscarPorId(id);
     }
 
     @PostMapping("/crear")
-    public TicketDto crear(@RequestBody TicketCrearDto dto){
+    public TicketDto crear(@RequestBody TicketCrearDto dto) {
         return ticketService.crear(dto);
     }
 
     @PostMapping("/asignar")
-    public TicketDto asignar(@RequestBody TicketAsignarDto dto){
+    public TicketDto asignar(@RequestBody TicketAsignarDto dto) {
         return ticketService.asignar(dto);
     }
 
     @PostMapping("/cambiar-estado")
-    public TicketDto cambiarEstado(@RequestBody TicketEstadoDto dto){
+    public TicketDto cambiarEstado(@RequestBody TicketEstadoDto dto) {
         return ticketService.cambiarEstado(dto);
     }
 
     @PostMapping("/cerrar")
-    public TicketDto cerrar(@RequestBody TicketSolucionDto dto){
+    public TicketDto cerrar(@RequestBody TicketSolucionDto dto) {
         return ticketService.cerrarConSolucion(dto);
     }
 
-//    Ticket Comentario
+    //    Ticket Comentario
     @PostMapping("/comentarios/listar")
     public List<TicketComentarioDto> listarComentarios(@RequestBody TicketComentarioCrearDto dto) {
         return ticketService.listarComentarios(dto.getTicketId());
@@ -72,6 +75,7 @@ public class TicketController {
     public List<TicketAjuntoDto> listarAdjuntos(@PathVariable Long id) {
         return ticketService.listarAdjuntos(id);
     }
+
     @PostMapping("/adjuntos/registrar")
     public TicketAjuntoDto registrarAdjunto(@RequestBody TicketAdjuntoCrearDto dto) {
         return ticketService.registrarAdjunto(dto);
@@ -84,8 +88,21 @@ public class TicketController {
 //Ticket Historial
 
     @PostMapping("historial/listar")
-    public List<TicketHistorialDto> listarHistorial (@RequestBody TicketDto dto){
+    public List<TicketHistorialDto> listarHistorial(@RequestBody TicketDto dto) {
         return ticketService.listarHistorial(dto.getId());
+    }
+//Subir Archivos
+
+
+    @PostMapping(
+            value = "/adjuntos/subir",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public TicketAjuntoDto subirAdjunto(
+            @RequestParam Long ticketId,
+            @RequestParam("archivo") MultipartFile archivo
+    ) {
+        return ticketService.subirAdjunto(ticketId, archivo);
     }
 
 }

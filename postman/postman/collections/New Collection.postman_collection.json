@@ -102,6 +102,64 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "Seubir Archivos",
+      "id": "96097e41-b0f1-4a15-903d-89237558adfa",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnYWxsYXJqb2VsQGdtYWlsLmNvbSIsInVzdWFyaW9JZCI6Nywicm9sIjoiQURNSU4iLCJpYXQiOjE3ODEyOTczOTEsImV4cCI6MTc4MTMwNDU5MX0.apsM5hobjdA-dxgJwqU2bjrWf4QR_ue5c59oSAqDae4",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYWxsYXJqb2VsQGdtYWlsLmNvbSIsInVzdWFyaW9JZCI6Nywicm9sIjoiQURNSU4iLCJpYXQiOjE3ODEyOTY2NzQsImV4cCI6MTc4MTMwMzg3NH0.nwPJFvbplcwvJLi3NUU8FXu3XJUSZvcnEvW6If1CO0eKGLfVa_UAGWLq9PBFVbxLI_oi1--_1Kw-OWP3I4CbJQ",
+            "type": "text",
+            "uuid": "887aa88d-316e-4c0e-9868-45aa11304863",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "TicketId",
+              "value": "1",
+              "type": "text",
+              "uuid": "4432b6fc-b0ea-4f48-bbe8-7b4cd164f48d"
+            },
+            {
+              "key": "archivo",
+              "type": "file",
+              "uuid": "c758275d-85e0-4120-a5ea-b07317188bcb",
+              "src": [
+                "/C:/Users/galla/OneDrive/Escritorio/Seguimiento.pdf"
+              ]
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseLocalUrl}}/api/tickets/adjuntos/subir",
+          "host": [
+            "{{baseLocalUrl}}"
+          ],
+          "path": [
+            "api",
+            "tickets",
+            "adjuntos",
+            "subir"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "variable": [
