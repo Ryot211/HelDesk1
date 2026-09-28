@@ -39,6 +39,11 @@ public class SecurityConfig {
                         // Login público
                         .requestMatchers("/api/auth/login").permitAll()
 
+                        // Swagger / OpenAPI
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+
                         // Usuarios
                         .requestMatchers("/api/usuarios/listar").hasAnyRole("ADMIN", "SOPORTE")
                         .requestMatchers("/api/usuarios/buscar/**").hasAnyRole("ADMIN", "SOPORTE")
@@ -51,6 +56,7 @@ public class SecurityConfig {
                         // Catálogos
                         .requestMatchers("/api/categorias-ticket/**").hasRole("ADMIN")
                         .requestMatchers("/api/departamentos/**").hasRole("ADMIN")
+                        .requestMatchers("/api/roles/**").hasRole("ADMIN")
 
                         // Tickets, comentarios, historial y adjuntos
                         .requestMatchers("/api/tickets/**").hasAnyRole(

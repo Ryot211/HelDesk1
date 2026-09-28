@@ -13,4 +13,6 @@ public interface TicketRepo extends JpaRepository<Ticket, Long> {
 
     boolean existsByCodigo(String codigo);
 
+    Long countByEstado(String Estado);
+
 }

@@ -602,4 +602,23 @@ public class TicketService {
                 tipoContenido
         );
     }
+
+
+    @Transactional(readOnly = true)
+    public DashboardResumenDto obtenerResumenDashboard(){
+        Long totalTickets = ticketRepo.count();
+        Long ticketsAbiertos = ticketRepo.countByEstado(SisVars.REGISTRADO);
+        Long ticketsEnAtencion = ticketRepo.countByEstado(SisVars.ASIGNADO);
+        Long ticketsCerrados = ticketRepo.countByEstado(SisVars.CERRADO);
+        Long ticketsFinalizados = ticketRepo.countByEstado(SisVars.RESUELTO);
+
+        return new DashboardResumenDto(
+                totalTickets,
+                ticketsAbiertos,
+                ticketsEnAtencion,
+                ticketsCerrados,
+                ticketsFinalizados
+        );
+
+    }
 }

@@ -4,3 +4,10 @@ spring:
 
   profiles:
     active: local
+
+  flyway:
+    enabled: true
+    schemas: helpdesk
+    default-schema: helpdesk
+    baseline-on-migrate: true
+    baseline-version: 1
