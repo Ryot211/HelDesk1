@@ -57,8 +57,6 @@ Requisito previo: tener Docker y Docker Compose instalados.
 docker compose up --build
 ```
 
-> **Nota:** en este punto el contenedor de Postgres arranca vacío (solo con el schema `helpdesk` creado, sin tablas), por lo que el backend va a fallar la validación de Hibernate (`ddl-auto: validate`) hasta que exista la migración inicial de base de datos. Esto es esperado y se resuelve en el siguiente paso del proyecto (migraciones Flyway); no es un error de la configuración Docker.
-
 Las tablas se crean automáticamente al levantar el backend mediante las migraciones Flyway versionadas (`V1__esquema_inicial.sql`), lo que hace que el entorno sea reproducible tanto en local como en Docker.
 
 ---
@@ -71,6 +69,34 @@ El backend implementa autenticación real basada en JWT:
 - Un filtro JWT intercepta las peticiones protegidas, valida el token y establece el contexto de seguridad para cada request.
 - Existen 3 roles de usuario: `ADMIN`, `SOPORTE` y `USUARIO_FINAL`. Los endpoints están protegidos según el rol correspondiente, configurado en `SecurityConfig.java`.
 - Las contraseñas de los usuarios se almacenan siempre hasheadas, nunca en texto plano.
+
+---
+
+## Usuarios demo
+
+La migración `V2__datos_demo.sql` carga los 3 roles, departamentos, categorías de ticket y un usuario por rol. Todos usan la contraseña `Demo1234!`:
+
+| Rol | Email |
+| --- | --- |
+| ADMIN | `admin@helpdesk.demo` |
+| SOPORTE | `soporte@helpdesk.demo` |
+| USUARIO_FINAL | `usuario@helpdesk.demo` |
+
+> Son credenciales públicas de demostración: cámbialas o inactiva estos usuarios en un entorno real.
+
+---
+
+## Despliegue (perfil `prod`)
+
+Variables de entorno requeridas:
+
+- `SPRING_PROFILES_ACTIVE=prod`
+- `DB_URL` (formato `jdbc:postgresql://host:5432/db`), `DB_USERNAME`, `DB_PASSWORD`
+- `APP_JWT_SECRET` (cadena larga y aleatoria)
+- `APP_CORS_ALLOWED_ORIGINS` (orígenes del frontend separados por coma; admite patrones)
+- Opcionales: `PORT` (default 8080), `APP_UPLOAD_DIR` (default `/app/uploads`), `APP_JWT_EXPIRATION_MS`
+
+Health check público: `GET /actuator/health`.
 
 ---
 
